@@ -2,22 +2,31 @@ import torch
 import numpy as np
 from PIL import Image
 from resnet import resnet18
+import os
+import gdown
+
 
 EMOTIONS = [
     "Angry", "Disgust", "Fear",
     "Happy", "Sad", "Surprise", "Neutral"
 ]
 
+MODEL_PATH = "https://drive.google.com/file/d/1iInqUHPgLsGaL8Brs-vv1o731b0tT9Cx/view?usp=drive_link"
+DRIVE_FILE_ID = "1iInqUHPgLsGaL8Brs-vv1o731b0tT9Cx"
+
+def download_model():
+    if not os.path.exists(MODEL_PATH):
+        url = f"https://drive.google.com/uc?id={DRIVE_FILE_ID}"
+        gdown.download(url, MODEL_PATH, quiet=False)
+
 def load_model():
-    model = resnet18(num_classes=7)
-    state_dict = torch.load(
-        "emotion_resnet18_weights.pth",
-        map_location="cpu",
-        weights_only=True
-    )
-    model.load_state_dict(state_dict)
+    download_model()
+    model = models.resnet18(pretrained=False)
+    model.fc = torch.nn.Linear(model.fc.in_features, 7)
+    model.load_state_dict(torch.load(MODEL_PATH, map_location="cpu"))
     model.eval()
     return model
+
 
 def preprocess_image(image):
     image = image.convert("L").resize((48, 48))
