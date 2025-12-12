@@ -33,11 +33,14 @@ def load_model():
     return model
 
 transform = transforms.Compose([
-    transforms.Grayscale(num_output_channels=3),
+    transforms.Grayscale(num_output_channels=1),
     transforms.Resize((48, 48)),
     transforms.ToTensor(),
-    transforms.Normalize(mean=[0.5]*3, std=[0.5]*3)
+    transforms.Normalize(mean=[0.5], std=[0.5])
 ])
+img = Image.open(uploaded_file).convert("RGB")
+img = transform(img)
+img = img.unsqueeze(0)  
 
 def predict_emotion(model, image):
     image = transform(image).unsqueeze(0)
