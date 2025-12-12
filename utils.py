@@ -37,10 +37,7 @@ transform = transforms.Compose([
     transforms.Resize((48, 48)),
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.5], std=[0.5])
-])
-img = Image.open(uploaded_file).convert("RGB")
-img = transform(img)
-img = img.unsqueeze(0)  
+]) 
 
 def predict_emotion(model, image):
     image = transform(image).unsqueeze(0)
